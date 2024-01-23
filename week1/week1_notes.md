@@ -1,13 +1,20 @@
 # Docker + Postgres
 
-## Introduction to Docker
+## Table of contents
++ [Introduction to Docker](#movie_camera-introduction-to-docker)
++ [Ingesting NY Taxi Data to Postgres](#movie_camera-ingesting-ny-taxi-data-to-postgres)
++ [Connecting pgAdmin and Postgres](#movie_camera-connecting-pgadmin-and-postgres)
+
+---
+## :movie_camera: Introduction to Docker
 
 Docker:
 + delivers software in packages called containers
 + containers are isolated from one another
 + (smarter notes will come later this week)
 
-## Ingesting NY Taxi Data to Postgres
+---
+## :movie_camera: Ingesting NY Taxi Data to Postgres
 
 ### Setting up the server
 
@@ -118,3 +125,75 @@ We did it! We successfully read from a .PARQUET file and wrote into a database..
 ![ciao](assets/week1_pgcli_db_is_not_empty.PNG)
 
 :D We have succesfully loaded the data into the Postgres database!
+
+---
+
+[^ Back to table of contents](#table-of-contents)
+
+---
+## :movie_camera: Connecting pgAdmin and Postgres
+
+Now that we have loaded the data, we can explore it a little bit. For example, we can see the datetime for the first pickup contained in the database, the date for the last pickup, and the maximum amount ever paid.
+
+![code](assets/week1_postgres13_explore_the_data.PNG)
+
+7k dollars! Well, that must have been a trip! We don't know if those are mistakes or actual records, we might need to analyze the dataset to see if those are extreme outliers that might be best to exclude from a careful analysis.
+
+However, the terminal is not the best interface. Shall we use docker to run a pdAdmin container as our client?
+
+```
+winpty docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8080:80 \
+    dpage/pgadmin4
+```
+
+After we run this command in yet again another Git Bash terminal, this is my current predicament:
+
+![ciao](assets/week1_server_client_pgAdmin_pgAdminWeb.PNG)
+
+After filling the necessary fields to make pgAdmin connect to the database, we realize that the pgAdmin container and the server container cannot actually see each other, as they are running each in their own container.
+
+The solution? We need to run a docker container that creates a network, and then we need to run the server container and the pdAdmin container _inside_ this container.
+
+To assist in the understanding of the concept, I made a very detailed and very instructive drawing in powerpoint.
+
+![ciao](assets/docker_network.png)
+
+### Setting up the network of containers
+
+It's easier than it sounds like: we just need to stop all the containers, create a new docker container by running the command:
+
+```
+winpty docker network create pg-network
+```
+
+And then we can run our server and pgAdmin containers again, adding a name (to easily identify the container) and which network they're part of.
+
+```
+winpty docker run -it \
+    -e POSTGRES_USER="root" \
+    -e POSTGRES_PASSWORD="root" \
+    -e POSTGRES_DB="ny_taxi" \
+    -v /c/Users/drago/Documents/GitHub/dezoomcamp24/week1/docker_sql/ny_taxi_postgres_data:/var/lib/postgresql/data \
+    -p 5432:5432 \
+    --network=pg-network \
+    --name pg-database \
+    postgres:13
+```
+
+```
+winpty docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8080:80 \
+    --network=pg-network \
+    --name pgadmin \
+    dpage/pgadmin4
+```
+
+Finally, we can access the server container from our client container.
+
+![ciao](assets/week1_network_pgdatabase_pgadmin.PNG)
+
