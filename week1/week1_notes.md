@@ -8,13 +8,41 @@
 ---
 ## :movie_camera: Introduction to Docker
 
-Docker:
-+ delivers software in packages called containers
-+ containers are isolated from one another
-+ (smarter notes will come later this week)
+| [Link to video](https://www.youtube.com/watch?v=EYNwNlOrpr0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb) |
+
+Let's define the simplest data pipeline: a Python script that reads data from a source, maybe a .csv file, and after doing something with the data (maybe some processing, maybe some cleaning), it writes the data to some database.
+
+![Data pipeline](assets/data_pipeline1.png)
+
+Of course, the data pipeline can include more than one source, it can have more than one script, etc.
+
+Now let's focus on one particular step: some script that reads some data in .csv format and writes it to Postgres. We want to run it on our computer, the host machine; we can have multiple containers that we run with Docker, each managing a specific part of the whole process.
+
+### Docker? 
+
+Docker delivers software in packages, called containers, that are isolated from one another.
+
+In our example, each container is isolated from the others, and all containers are isolated from the host machine; if we want to run our data pipeline on Ubuntu, we can run an Ubuntu container on our Windows machine and put in everything it needs to execute the script; if we want to write the output of our pipeline on a Postgres database without interfering with the Postgres database already installed on our host machine, we can run a docker container that will be our Postgres database, and we can even run a pgAdmin container that will connect to the Postgres database and let us perform all kinds of queries and operations.
+
+![Containers](assets/docker_containers.png)
+
+Why is Docker so important?
+
++ _Reproducibility:_ that Ubuntu container that knows how to read a file in .csv format and write the result of its processing on a Postgres database is ready to be taken and ran into a completely different enviroment. Do we want to run it on the Cloud? We can, it's easy and immediate
++ _Local experiments...:_ we can quickly test our scripts and programs to make sure that their behaviour is exactly what we expect, without actually breaking anything in case what they're actually doing is _not_ what we expected.
++ _... and integration tests (CI/CD)_
++ _Running pipelines on the cloud_
++ _Serverless_
+
+
+---
+
+[^ Back to table of contents](#table-of-contents)
 
 ---
 ## :movie_camera: Ingesting NY Taxi Data to Postgres
+
+| [Link to video](https://www.youtube.com/watch?v=2JM-ziJt0WI&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb) |
 
 ### Setting up the server
 
@@ -132,6 +160,7 @@ We did it! We successfully read from a .PARQUET file and wrote into a database..
 
 ---
 ## :movie_camera: Connecting pgAdmin and Postgres
+| [Link to video](https://www.youtube.com/watch?v=hCAIVe9N0ow&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb) |
 
 Now that we have loaded the data, we can explore it a little bit. For example, we can see the datetime for the first pickup contained in the database, the date for the last pickup, and the maximum amount ever paid.
 
@@ -196,4 +225,13 @@ winpty docker run -it \
 Finally, we can access the server container from our client container.
 
 ![ciao](assets/week1_network_pgdatabase_pgadmin.PNG)
+
+
+---
+
+[^ Back to table of contents](#table-of-contents)
+
+---
+## :movie_camera: Putting the ingestion script into Docker
+| [Link to video](https://www.youtube.com/watch?v=B1WwATwf-vY&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb) |
 
