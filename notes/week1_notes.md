@@ -242,3 +242,12 @@ Finally, we can access the server container from our client container.
 
 We have seen how to create containers separately, and then how to create a network container and connected them to it. Instead of doing this by hand, we can specify one YAML file with config for all containers, and then just run that.
 
+(Work in progress)
+
+# Introduction to Google Cloud Platform
+
+(Work in progress)
+
+# Terraform
+| [Link to video](https://www.youtube.com/watch?v=s2bOYDCKl_M) |
+
