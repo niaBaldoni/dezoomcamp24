@@ -16,9 +16,8 @@ def main(params):
     url = params.url
 
     parq_name = 'output.parquet'
-
-    os.system(f"wget {url} -O {parq_name}")
     
+    os.system(f"wget {url} -O {parq_name}")
 
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
     engine.connect()
