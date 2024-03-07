@@ -1,3 +1,4 @@
+/.vscode
 week1/docker_sql/ny_taxi_postgres_data/
 week1/docker_sql/.ipynb_checkpoints/
 week1/terraform_gcp/notes.md
